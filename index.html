@@ -333,24 +333,12 @@
 
         .cta-section p {
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
-        .btn-calendly {
-            background: white;
-            color: #ef4444;
-            padding: 18px 50px;
+        .calendly-inline-widget {
             border-radius: 8px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-calendly:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
         .email-capture-section {
@@ -653,7 +641,11 @@
             <div class="cta-section">
                 <h4>Ready to Take Your Business to the Next Level?</h4>
                 <p>Book a no-commitment 15-minute discovery call and let's explore how automation can help you reclaim your time and scale your business.</p>
-                <a href="https://calendly.com/onstrahq/setup-and-growth-consultation-1" target="_blank" class="btn-calendly">Schedule Your Free Call</a>
+                
+                <!-- Calendly iframe embed -->
+                <div style="background: white; border-radius: 8px; overflow: hidden; margin-top: 20px;">
+                    <iframe src="https://calendly.com/onstrahq/setup-and-growth-consultation-1?embed_domain=&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1" width="100%" height="700" frameborder="0"></iframe>
+                </div>
             </div>
 
             <!-- Optional Email Capture -->

@@ -333,7 +333,24 @@
 
         .cta-section p {
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        .btn-calendly {
+            background: white;
+            color: #ef4444;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-calendly:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .calendly-inline-widget {
@@ -642,10 +659,8 @@
                 <h4>Ready to Take Your Business to the Next Level?</h4>
                 <p>Book a no-commitment 15-minute discovery call and let's explore how automation can help you reclaim your time and scale your business.</p>
                 
-                <!-- Calendly iframe embed -->
-                <div style="background: white; border-radius: 8px; overflow: hidden; margin-top: 20px;">
-                    <iframe src="https://calendly.com/onstrahq/setup-and-growth-consultation-1?embed_domain=&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1" width="100%" height="700" frameborder="0"></iframe>
-                </div>
+                <!-- Calendly popup button -->
+                <button class="btn-calendly" onclick="openCalendly()">Schedule a Call</button>
             </div>
 
             <!-- Optional Email Capture -->
@@ -822,6 +837,21 @@
 
         // Initialize progress bar
         updateProgressBar();
+
+        // Calendly popup function using official widget
+        function openCalendly() {
+            if (typeof Calendly !== 'undefined') {
+                Calendly.initPopupWidget({url: 'https://calendly.com/onstrahq/setup-and-growth-consultation-1'});
+            } else {
+                // Fallback if script hasn't loaded yet
+                window.open('https://calendly.com/onstrahq/setup-and-growth-consultation-1', '_blank');
+            }
+            return false;
+        }
     </script>
+    
+    <!-- Calendly badge widget begin -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 </body>
 </html>

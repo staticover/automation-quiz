@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Readiness Quiz | Onstra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .logo p {
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .quiz-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .quiz-header p {
+            font-size: 1.1rem;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #222;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ef4444;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .question h3 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #ef4444;
+            background: #222;
+            transform: translateX(5px);
+        }
+
+        .option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .option input[type="radio"]:checked + label {
+            color: #ef4444;
+        }
+
+        .option.selected {
+            border-color: #ef4444;
+            background: #1a1a1a;
+        }
+
+        .option label {
+            cursor: pointer;
+            display: block;
+            color: #ddd;
+            font-size: 1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .email-form {
+            display: none;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+        .email-form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .email-form h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .email-form p {
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ef4444;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .score-badge.tier-1 {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 2px solid #ef4444;
+        }
+
+        .score-badge.tier-2 {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+
+        .score-badge.tier-3 {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 2px solid #22c55e;
+        }
+
+        .results h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .results p {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .results ul {
+            text-align: left;
+            max-width: 600px;
+            margin: 30px auto;
+            list-style: none;
+        }
+
+        .results li {
+            padding: 15px 0;
+            border-bottom: 1px solid #222;
+            color: #ddd;
+        }
+
+        .results li:before {
+            content: "✓ ";
+            color: #ef4444;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .cta-section h4 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 25px;
+        }
+
+        .btn-calendly {
+            background: white;
+            color: #ef4444;
+            padding: 18px 50px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calendly:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .email-capture-section {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .email-capture-section h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .email-capture-section p {
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .email-form-inline {
+            display: flex;
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .email-form-inline input[type="email"] {
+            flex: 1;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .email-form-inline input[type="email"]:focus {
+            outline: none;
+            border-color: #ef4444;
+        }
+
+        .email-form-inline button {
+            white-space: nowrap;
+        }
+
+        .success-message {
+            color: #22c55e;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #222;
+        }
+
+        .footer a {
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-header h2 {
+                font-size: 2rem;
+            }
+
+            .question {
+                padding: 30px 20px;
+            }
+
+            .results-card {
+                padding: 40px 25px;
+            }
+
+            .email-form-inline {
+                flex-direction: column;
+            }
+
+            .email-capture-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Onstra</h1>
+            <p>Automation for Service Businesses</p>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h2>Is Your Business Ready to Run Without You?</h2>
+            <p>Take this 60-second assessment to discover if automation can help you reclaim your time and scale your business.</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <!-- Questions -->
+        <div id="quizContainer">
+            <!-- Question 1 -->
+            <div class="question-container active" data-question="1">
+                <div class="question">
+                    <h3>How many leads do you get per month?</h3>
+                    <div class="options">
+                        <div class="option" data-value="1">
+                            <input type="radio" name="q1" id="q1a" value="1">
+                            <label for="q1a">Less than 10 leads</label>
+                        </div>
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q1" id="q1b" value="2">
+                            <label for="q1b">10-30 leads</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q1" id="q1c" value="3">
+                            <label for="q1c">30-50 leads</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q1" id="q1d" value="4">
+                            <label for="q1d">50+ leads</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()" style="visibility: hidden;">Back</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" disabled id="nextBtn1">Next</button>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-container" data-question="2">
+                <div class="question">
+                    <h3>How do you currently handle follow-ups with new leads?</h3>
+                    <div class="options">
+                        <div class="option" data-value="1">
+                            <input type="radio" name="q2" id="q2a" value="1">
+                            <label for="q2a">What follow-ups? I'm too busy</label>
+                        </div>
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q2" id="q2b" value="2">
+                            <label for="q2b">Manually text/call each one when I remember</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q2" id="q2c" value="3">
+                            <label for="q2c">I have some templates but it's inconsistent</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q2" id="q2d" value="4">
+                            <label for="q2d">I have a system but it still requires lots of manual work</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" disabled id="nextBtn2">Next</button>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-container" data-question="3">
+                <div class="question">
+                    <h3>How many hours per week do you spend on repetitive admin tasks?</h3>
+                    <div class="options">
+                        <div class="option" data-value="1">
+                            <input type="radio" name="q3" id="q3a" value="1">
+                            <label for="q3a">Less than 5 hours</label>
+                        </div>
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q3" id="q3b" value="2">
+                            <label for="q3b">5-10 hours</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q3" id="q3c" value="3">
+                            <label for="q3c">10-20 hours</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q3" id="q3d" value="4">
+                            <label for="q3d">20+ hours (it's basically all I do)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" disabled id="nextBtn3">Next</button>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-container" data-question="4">
+                <div class="question">
+                    <h3>What's your biggest operational challenge right now?</h3>
+                    <div class="options">
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q4" id="q4a" value="2">
+                            <label for="q4a">Leads falling through the cracks</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q4" id="q4b" value="3">
+                            <label for="q4b">Too much manual work, can't scale</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q4" id="q4c" value="3">
+                            <label for="q4c">No-shows and poor communication</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q4" id="q4d" value="4">
+                            <label for="q4d">Complete disorganized chaos - all of the above</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" disabled id="nextBtn4">Next</button>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-container" data-question="5">
+                <div class="question">
+                    <h3>Do you have any systems or CRM in place?</h3>
+                    <div class="options">
+                        <div class="option" data-value="1">
+                            <input type="radio" name="q5" id="q5a" value="1">
+                            <label for="q5a">Nothing - I run everything from my phone and memory</label>
+                        </div>
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q5" id="q5b" value="2">
+                            <label for="q5b">Spreadsheets and notes</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q5" id="q5c" value="3">
+                            <label for="q5c">Basic CRM but barely use it</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q5" id="q5d" value="4">
+                            <label for="q5d">Multiple tools that don't talk to each other (it's a mess)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" disabled id="nextBtn5">Next</button>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-container" data-question="6">
+                <div class="question">
+                    <h3>What's preventing you from scaling right now?</h3>
+                    <div class="options">
+                        <div class="option" data-value="2">
+                            <input type="radio" name="q6" id="q6a" value="2">
+                            <label for="q6a">Not enough leads</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q6" id="q6b" value="3">
+                            <label for="q6b">I'm the bottleneck - everything requires me</label>
+                        </div>
+                        <div class="option" data-value="4">
+                            <input type="radio" name="q6" id="q6c" value="4">
+                            <label for="q6c">No time to focus on growth - stuck in day-to-day chaos</label>
+                        </div>
+                        <div class="option" data-value="3">
+                            <input type="radio" name="q6" id="q6d" value="3">
+                            <label for="q6d">Can't afford to hire help yet</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">Back</button>
+                    <button class="btn btn-primary" onclick="showResults()" disabled id="nextBtn6">See My Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="score-badge" id="scoreBadge">Loading...</div>
+                <h3 id="resultTitle">Calculating your score...</h3>
+                <p id="resultDescription"></p>
+
+                <ul id="resultPoints"></ul>
+            </div>
+
+            <div class="cta-section">
+                <h4>Ready to Take Your Business to the Next Level?</h4>
+                <p>Book a no-commitment 15-minute discovery call and let's explore how automation can help you reclaim your time and scale your business.</p>
+                <a href="https://calendly.com/onstrahq/setup-and-growth-consultation-1" target="_blank" class="btn-calendly">Schedule Your Free Call</a>
+            </div>
+
+            <!-- Optional Email Capture -->
+            <div class="email-capture-section">
+                <h4>Not Ready Yet? Get Your Results Emailed</h4>
+                <p>We'll send you a detailed breakdown of your results plus tips on getting started with automation.</p>
+                <form id="emailForm" action="https://formspree.io/f/xwvqljep" method="POST">
+                    <div class="email-form-inline">
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <input type="hidden" name="quiz_score" id="quizScore">
+                        <input type="hidden" name="result_tier" id="resultTier">
+                        <input type="hidden" name="q1_answer" id="q1Answer">
+                        <input type="hidden" name="q2_answer" id="q2Answer">
+                        <input type="hidden" name="q3_answer" id="q3Answer">
+                        <input type="hidden" name="q4_answer" id="q4Answer">
+                        <input type="hidden" name="q5_answer" id="q5Answer">
+                        <input type="hidden" name="q6_answer" id="q6Answer">
+                        <button type="submit" class="btn btn-secondary">Send My Results</button>
+                    </div>
+                </form>
+                <p class="success-message" id="emailSuccess" style="display: none;">✓ Results sent! Check your inbox.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Want to learn more? <a href="https://www.onstra.world">Visit Onstra.world</a></p>
+            <p style="margin-top: 20px; color: #666;">© 2026 Onstra. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 6;
+        let answers = {};
+
+        // Setup option selection
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.closest('.question-container').dataset.question;
+                const input = this.querySelector('input[type="radio"]');
+                
+                // Remove selected class from all options in this question
+                this.closest('.options').querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                input.checked = true;
+                
+                // Store answer
+                answers[`q${question}`] = parseInt(input.value);
+                
+                // Enable next button
+                document.getElementById(`nextBtn${question}`).disabled = false;
+            });
+        });
+
+        function updateProgressBar() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('results').classList.add('active');
+            
+            const score = Object.values(answers).reduce((a, b) => a + b, 0);
+            
+            let tier, title, description, points, badgeClass;
+            
+            if (score <= 12) {
+                tier = 1;
+                badgeClass = 'tier-1';
+                title = 'Just Getting Started';
+                description = 'You\'re in the early stages of your business journey. While automation might not be your immediate priority, there are foundational systems you can put in place now that will make scaling easier later.';
+                points = [
+                    'Focus on consistent lead capture first',
+                    'Start building simple follow-up templates',
+                    'Document your current processes',
+                    'When you hit 20+ leads/month, revisit automation'
+                ];
+            } else if (score <= 18) {
+                tier = 2;
+                badgeClass = 'tier-2';
+                title = 'Ready for Automation';
+                description = 'You\'re at the perfect stage where automation will have massive ROI. You have enough volume to justify it, but you\'re not so overwhelmed that implementation will be impossible. This is your window.';
+                points = [
+                    'Automate lead follow-up sequences immediately',
+                    'Implement booking automation to reduce no-shows',
+                    'Centralize communications in one system',
+                    'Free up 10-15 hours per week within 30 days'
+                ];
+            } else {
+                tier = 3;
+                badgeClass = 'tier-3';
+                title = 'Automation Overdue';
+                description = 'You\'re losing serious time and money every day without automation. The chaos is costing you opportunities, burning you out, and preventing you from scaling. The good news? You\'ll see dramatic improvements fast.';
+                points = [
+                    'You\'re likely missing 20-30% of leads',
+                    'Spending 20+ hours/week on tasks that could be automated',
+                    'Immediate automation could recover $10K-$50K+ annually',
+                    'You need systems in place yesterday'
+                ];
+            }
+            
+            document.getElementById('scoreBadge').textContent = title;
+            document.getElementById('scoreBadge').className = `score-badge ${badgeClass}`;
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultDescription').textContent = description;
+            
+            const pointsList = document.getElementById('resultPoints');
+            pointsList.innerHTML = '';
+            points.forEach(point => {
+                const li = document.createElement('li');
+                li.textContent = point;
+                pointsList.appendChild(li);
+            });
+
+            // Store data for optional email submission
+            document.getElementById('quizScore').value = score;
+            document.getElementById('resultTier').value = title;
+            document.getElementById('q1Answer').value = answers.q1;
+            document.getElementById('q2Answer').value = answers.q2;
+            document.getElementById('q3Answer').value = answers.q3;
+            document.getElementById('q4Answer').value = answers.q4;
+            document.getElementById('q5Answer').value = answers.q5;
+            document.getElementById('q6Answer').value = answers.q6;
+        }
+
+        // Handle optional email form submission
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('https://formspree.io/f/xwvqljep', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById('emailSuccess').style.display = 'block';
+                    this.style.display = 'none';
+                } else {
+                    alert('There was an error sending your results. Please try again.');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('There was an error sending your results. Please try again.');
+            });
+        });
+
+        // Initialize progress bar
+        updateProgressBar();
+    </script>
+</body>
+</html>
